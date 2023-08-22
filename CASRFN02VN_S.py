@@ -29,10 +29,11 @@ tacct_extracts = tacct_extracts \
     .filter((col("extract_typ").isin(['N', 'X', 'A'])) & 
             (year(col("trxn_dt")) >= year(date_add(last_day(add_months(date_add(current_date(), -7), -1)), 1))))
  
-#tacct_extracts_dedup = tacct_extracts.filter(
+tacct_extracts_dedup = tacct_extracts.dropDuplicates()
+#.filter(
 #    (col("trxn_dt").between("2023-06-01", "2023-06-30")) &
 #    (col("acct_num") == "1111120")
-#).dropDuplicates()
+#)
 
 #tacct_extracts_dedup.show()
 
