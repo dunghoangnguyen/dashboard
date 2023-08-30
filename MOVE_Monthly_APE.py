@@ -75,7 +75,7 @@ daily_df = load_parquet_files(daily_paths,daily_files)
 list_df.update(snapshot_df)
 list_df.update(daily_df)
 
-print('List of dataframes: ', list(list_df.keys()))
+#print('List of dataframes: ', list(list_df.keys()))
 
 # COMMAND ----------
 

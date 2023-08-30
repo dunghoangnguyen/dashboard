@@ -18,7 +18,7 @@
 
 # COMMAND ----------
 
-import pandas as pd
+from pyspark.sql.functions import count
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -196,7 +196,7 @@ with rs_agt_hrchy as (
 		inner join tams_locations aloc on (ams.loc_code = aloc.loc_cd)
 	where
 		ams.agt_stat_code ='1'
-		and ams.cntrct_eff_dt <= last_day(add_months(current_date,'{lmth}'))
+		and ams.cntrct_eff_dt <= last_day(add_months(current_date,{lmth}))
 )
 select
 	rh_code
@@ -212,15 +212,22 @@ select
 	,location_name
 	,mba_ind	
 	,fta_ind
-	,12*(year(last_day(add_months(current_date,'{lmth}'))) - year(cntrct_eff_dt)) + (month(last_day(add_months(current_date,'{lmth}'))) - month(cntrct_eff_dt)) srv_mth
+	,12*(year(last_day(add_months(current_date,{lmth}))) - year(cntrct_eff_dt)) + (month(last_day(add_months(current_date,{lmth}))) - month(cntrct_eff_dt)) srv_mth
 	,channel
 	,comp_prvd_num
-	,last_day(add_months(current_date,'{lmth}')) reporting_date
+	,last_day(add_months(current_date,{lmth})) reporting_date
 from
 	rs_agt_hrchy a
 where
 	channel in ('Agency','DMTM')
 """)
+
+df = agt_hrchy.groupBy('rh_name')\
+    .agg(
+        count('agt_code').alias('no_agents')
+	)
+    
+df.display()
 
 # COMMAND ----------
 
@@ -312,8 +319,8 @@ select distinct
 	,substr(mk.`value`,2,length(mk.`value`) -1) cli_num
 	,me.status manulifemember_status
 	,mk.activated movekey_activated
-	,from_unixtime(unix_timestamp(mk.activationdate,'yyyy-MM-dd'),'yyyy-MM-dd') activation_date
-	,from_unixtime(unix_timestamp(urt.lastdatasync,'yyyy-MM-dd'),'yyyy-MM-dd') last_data_sync_date
+	,to_date(mk.activationdate) activation_date
+	,to_date(urt.lastdatasync) last_data_sync_date
 from
 	muser_flat mu
 	inner join manulifemember_flat me on (mu.`_id` = me.userid)
@@ -371,7 +378,7 @@ with rs_agt_summarize as (
 		,count(distinct cli_num) no_of_cust
 		,count(distinct(case when move_user_info = 'Activated' and last_day(activation_date) = last_day(add_months(current_date,{lmth})) then cli_num end)) activation_this_month
 		,count(distinct(case when move_user_info = 'Activated' and year(activation_date) =  year(last_day(add_months(current_date,{lmth}))) and quarter(activation_date) = quarter(last_day(add_months(current_date,{lmth}))) then cli_num end)) actvation_this_quarter
-		,count(distinct(case when move_user_info = 'Activated' and activation_date >= {prm_ptd} then cli_num end)) activation_total
+		,count(distinct(case when move_user_info = 'Activated' and activation_date >= '{prm_ptd}' then cli_num end)) activation_total
 		,count(distinct(case when move_user_info = 'Activated' then cli_num end)) activation_move_ptd
 		,max(activation_date) lst_activation_date
 		--,sum(vol_of_pol_before_move_launched) vol_of_pol_before_move_launched
@@ -402,9 +409,9 @@ select
 	,a.location_name
 	,a.mba_ind	
 	,a.fta_ind
-	,a.srv_mth
+	,cast(a.srv_mth as long) as srv_mth
 	,a.channel
-	,b.no_of_cust
+	,cast(b.no_of_cust AS double) as no_of_cust
 	,b.activation_this_month
 	,b.actvation_this_quarter
 	,b.activation_total
