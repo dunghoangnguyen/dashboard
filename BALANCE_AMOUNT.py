@@ -73,13 +73,16 @@ SELECT
 FROM
                    (select * 
                     from tacct_extracts 
-                    where trxn_dt <= last_day(add_months(current_date,-1))
+                    where --acct_num =  '1121310' and
+                        trxn_dt <= last_day(add_months(current_date,-1))
         union all
                     select *
                     from tacct_extracts_histories
+                    --where acct_num =  '1121310'
         union all       
                     select *      
-                    from tacct_extracts_os                                                                    
+                    from tacct_extracts_os     
+                    --where acct_num =  '1121310'                                                               
                 ) acc
     left join tpolicys pol ON pol.pol_num = acc.pol_num 
     left join tcoverages cvg ON pol.plan_code_base = cvg.plan_code and pol.vers_num_base = cvg.vers_num and pol.pol_num = cvg.pol_num
