@@ -222,12 +222,12 @@ where
 	channel in ('Agency','DMTM')
 """)
 
-df = agt_hrchy.groupBy('rh_name')\
-    .agg(
-        count('agt_code').alias('no_agents')
-	)
+#df = agt_hrchy.groupBy('rh_name')\
+#    .agg(
+#        count('agt_code').alias('no_agents')
+#	)
     
-df.display()
+#df.display()
 
 # COMMAND ----------
 
