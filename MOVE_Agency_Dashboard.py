@@ -18,7 +18,7 @@
 
 # COMMAND ----------
 
-from pyspark.sql.functions import count
+from pyspark.sql.functions import col, count, countDistinct, sum
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -222,12 +222,12 @@ where
 	channel in ('Agency','DMTM')
 """)
 
-#df = agt_hrchy.groupBy('rh_name')\
-#    .agg(
-#        count('agt_code').alias('no_agents')
-#	)
+"""df = agt_hrchy.groupBy('rh_name')\
+    .agg(
+        count('agt_code').alias('no_agents')
+	)
     
-#df.display()
+df.display()"""
 
 # COMMAND ----------
 
@@ -277,8 +277,8 @@ with rs_cust as (
 		,count(case when pol_eff_dt <= '{move_launch}' then pol_num end) vol_of_pol_before_move_launched
 		,count(case when pol_eff_dt > '{move_launch}' then pol_num end) vol_of_pol_after_move_launched
 		,count(case when last_day(pol_eff_dt) = last_day(add_months(current_date,{lmth})) then pol_num end)  vol_of_pol_in_rpt_mth
-		,count(case when last_day(pol_eff_dt) >= last_day(add_months(current_date,{lmth} -3)) then pol_num end) vol_of_pol_in_lst_3mths
-		,sum(case when last_day(pol_eff_dt) >= last_day(add_months(current_date,{lmth} -3)) then ape end) ape_of_pol_in_lst_3mths
+		,count(case when last_day(pol_eff_dt) >= last_day(add_months(current_date,{lmth} -2)) then pol_num end) vol_of_pol_in_lst_3mths
+		,sum(case when last_day(pol_eff_dt) >= last_day(add_months(current_date,{lmth} -2)) then ape end) ape_of_pol_in_lst_3mths
 		,count(case when pol_eff_dt >= '{_2022_Jun}' then pol_num end) vol_of_pol_since_2022_jun
 	from
 		rs_cust
@@ -304,6 +304,20 @@ from
 where
 	a.rw_num = 1          
 """)
+
+"""df = ifp_customers.agg(
+    countDistinct('agt_code').alias('no_agts'),
+	countDistinct('cli_num').alias('no_cus'),
+	sum('vol_of_pol_before_move_launched').alias('vol_of_pol_before_move_launched'),
+	sum('vol_of_pol_after_move_launched').alias('vol_of_pol_after_move_launched'), 
+	sum('vol_of_pol_in_rpt_mth').alias('vol_of_pol_in_rpt_mth'),
+	sum('vol_of_pol_in_lst_3mths').alias('vol_of_pol_in_lst_3mths'),
+	sum('ape_of_pol_in_lst_3mths').alias('ape_of_pol_in_lst_3mths'),
+	sum('vol_of_pol_since_2022_jun').alias('vol_of_pol_since_2022_jun')
+)
+
+df.display()"""
+#ifp_customers.filter(col('agt_code')=='WS681').display()
 
 # COMMAND ----------
 
@@ -346,6 +360,7 @@ select
 	,cus.vol_of_pol_after_move_launched
 	,cus.vol_of_pol_in_rpt_mth
 	,cus.vol_of_pol_in_lst_3mths
+	,cus.ape_of_pol_in_lst_3mths
 	,cus.vol_of_pol_since_2022_jun
 	,cus.agt_code
 	,case
@@ -361,6 +376,20 @@ from
 where
 	cus.agt_code in (select agt_code from agt_hrchy)                     
 """)
+
+"""df = move_customers_base.groupBy(['move_user_info','cust_seg'])\
+    .agg(
+        countDistinct('agt_code').alias('no_agts'),
+		countDistinct('cli_num').alias('no_cus'),
+		sum('vol_of_pol_before_move_launched').alias('vol_of_pol_before_move_launched'),
+		sum('vol_of_pol_after_move_launched').alias('vol_of_pol_after_move_launched'), 
+		sum('vol_of_pol_in_rpt_mth').alias('vol_of_pol_in_rpt_mth'),
+		sum('vol_of_pol_in_lst_3mths').alias('vol_of_pol_in_lst_3mths'),
+		sum('ape_of_pol_in_lst_3mths').alias('ape_of_pol_in_lst_3mths'),
+		sum('vol_of_pol_since_2022_jun').alias('vol_of_pol_since_2022_jun')
+	)
+
+df.display()"""
 
 # COMMAND ----------
 
@@ -436,10 +465,55 @@ from
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC <strong>Additional data for TOP Quarterly Agents</strong>
+
+# COMMAND ----------
+
+move_embassador_campaign.createOrReplaceTempView('move_embassador_campaign')
+
+sql_string = """
+select
+        mec.rh_code,
+        mec.rh_name,
+        mec.sm_code,
+        mec.sm_name,
+        mec.direct_mgr_code,
+        mec.direct_mgr_name,
+        mec.agt_code,
+        mec.agt_name,
+        mec.location_code,
+        mec.location_name,
+        mec.mba_ind,
+        mec.fta_ind,
+        mec.srv_mth,
+        mec.channel,
+        mec.no_of_cust,
+        mec.activation_this_month,
+        mec.actvation_this_quarter,
+        mec.activation_total,
+        mec.lst_activation_date,
+        mec.comp_prvd_num,
+        mcb.vol_of_pol_in_rpt_mth,
+        mcb.vol_of_pol_in_lst_3mths,
+        mcb.ape_of_pol_in_lst_3mths,
+        mec.reporting_date
+from    move_embassador_campaign mec inner join
+        move_customers_base mcb on mec.agt_code=mcb.agt_code 
+            and mec.reporting_date=mcb.reporting_date
+order by mcb.ape_of_pol_in_lst_3mths desc
+limit 50
+"""
+top_Q_agents = sql_to_df(sql_string, 0, spark)
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC <strong>Store result to parquet</strong>
 
 # COMMAND ----------
 
 spark.conf.set('spark.sql.sources.partitionOverwriteMode', 'dynamic')
 
+move_customers_base.write.mode('overwrite').partitionBy('reporting_date').parquet(f'{out_path}MOVE_CUSTOMER_BASE/')
 move_embassador_campaign.write.mode('overwrite').partitionBy('reporting_date').parquet(f'{out_path}MOVE_EMBASSADOR_CAMPAIGN/')
+top_Q_agents.write.mode('overwrite').partitionBy('reporting_date').parquet(f'{out_path}TOP_MOVE_AGENTS/')

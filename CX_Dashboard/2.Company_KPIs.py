@@ -9,11 +9,9 @@
 
 # COMMAND ----------
 
-from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from datetime import date, datetime, timedelta
 
-spark = SparkSession.builder.appName("CX").getOrCreate()
 spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
 # COMMAND ----------
@@ -23,7 +21,7 @@ spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
 # COMMAND ----------
 
-x = 7 # Change to number of months ago (0: last month-end, 1: last last month-end, ...)
+x = 0 # Change to number of months ago (0: last month-end, 1: last last month-end, ...)
 today = datetime.now()
 first_day_of_current_month = today.replace(day=1)
 current_month = first_day_of_current_month

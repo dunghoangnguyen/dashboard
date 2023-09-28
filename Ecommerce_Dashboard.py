@@ -1,5 +1,19 @@
 # Databricks notebook source
 # MAGIC %md
+# MAGIC # ECOMMERCE DASHBOARD
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC <strong>Load functions</strong>
+
+# COMMAND ----------
+
+# MAGIC %run "/Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions"
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ### Step 1. Generate data for daily Ecommerce
 
 # COMMAND ----------
@@ -35,43 +49,33 @@ tpoli_source = 'TPOLIDM_DAILY/'
 tcust_source = 'TCUSTDM_DAILY/'
 tagt_source = 'TAGTDM_DAILY/'
 
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC <strong>Load all working tables</strong>
-
-# COMMAND ----------
-
-tmktDF = spark.read.parquet(f'{rpt_path}{tmkt_source}')
-polDF = spark.read.parquet(f'{cas_path}{pol_source}')
-lnkDF = spark.read.parquet(f'{cas_path}{lnk_source}')
-agtDF = spark.read.parquet(f'{ams_path}{agt_source}')
-scDF = spark.read.parquet(f'{sc_path}{sc_source}')
-plnDF = spark.read.parquet(f'{cpm_path}{pln_source}')
-nbvDF = spark.read.parquet(f'{stg_path}{nbv_source}')
-locDF = spark.read.parquet(f'{rpt_path}{loc_source}')
-tpoliDF = spark.read.parquet(f'{dm_path}{tpoli_source}')
-tcustDF = spark.read.parquet(f'{dm_path}{tcust_source}')
-tagtDF = spark.read.parquet(f'{dm_path}{tagt_source}')
+abfss_paths = [ams_path,stg_path,cas_path,cpm_path,rpt_path,sc_path,dm_path]
+parquet_files = [dest_source,tmkt_source,pol_source,lnk_source,agt_source,sc_source,
+                 nbv_source,pln_source,loc_source,tpoli_source,tcust_source,tagt_source]
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC <strong>Generate ecommerce table data</strong>
+# MAGIC <strong>Load all working tables into Spark dfs</strong>
 
 # COMMAND ----------
 
-tmktDF.createOrReplaceTempView('tmkt_submission')
-polDF.createOrReplaceTempView('tpolicys')
-lnkDF.createOrReplaceTempView('tclient_policy_links')
-agtDF.createOrReplaceTempView('tams_agents')
-scDF.createOrReplaceTempView('agent_scorecard')
-plnDF.createOrReplaceTempView('vn_plan_code_map')
-nbvDF.createOrReplaceTempView('nbv_margin_histories')
-locDF.createOrReplaceTempView('loc_to_sm_mapping')
-tpoliDF.createOrReplaceTempView('tpolidm_daily')
-tcustDF.createOrReplaceTempView('tcustdm_daily')
-tagtDF.createOrReplaceTempView('tagtdm_daily')
+list_df = {}
+
+list_df = load_parquet_files(abfss_paths, parquet_files)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC <strong>Generate table temp views</strong>
+
+# COMMAND ----------
+
+generate_temp_view(list_df)
+
+# COMMAND ----------
+
+
 
 # COMMAND ----------
 

@@ -9,12 +9,10 @@
 
 # COMMAND ----------
 
-from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from datetime import date, timedelta
 
-spark = SparkSession.builder.appName("CX").getOrCreate()
-spark = spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
+spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
 # COMMAND ----------
 
@@ -26,8 +24,8 @@ spark = spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 today = date.today()
 last_mthend = today.replace(day=1) - timedelta(days=1)
 rpt_dt = last_mthend.strftime('%Y-%m-%d')
-rpt_num = 2307
-print(rpt_dt)
+rpt_num = rpt_dt[2:4]+rpt_dt[5:7]
+print(rpt_dt, rpt_num)
 
 source_path = 'abfss://lab@abcmfcadovnedl01psea.dfs.core.windows.net/vn/project/cpm/ADEC/WorkingData/'
 dest_path = 'abfss://lab@abcmfcadovnedl01psea.dfs.core.windows.net/vn/project/scratch/ORC_ACID_to_Parquet_Conversion/apps/hive/warehouse/vn_processing_datamart_temp_db.db/customers_table_mthly/'
@@ -38,7 +36,7 @@ tpol_mthend_path = 'TPOLICYS/'
 tcli_pol_mthend_path = 'TCLIENT_POLICY_LINKS/'
 tcli_mthend_path = 'TCLIENT_DETAILS/'
 
-customer_table = spark.read.parquet(f"{source_path}customer_table_{rpt_num}")
+customer_table = spark.read.parquet(f"{source_path}customer_table_{rpt_num}/")
 tpol_mthend = spark.read.parquet(f"{snapshot_path}{tpol_mthend_path}")
 tcli_pol_mthend = spark.read.parquet(f"{snapshot_path}{tcli_pol_mthend_path}")
 tcli_mthend = spark.read.parquet(f"{snapshot_path}{tcli_mthend_path}")
