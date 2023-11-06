@@ -9,7 +9,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run "/Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions"
+# MAGIC %run /Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions
 
 # COMMAND ----------
 
@@ -198,7 +198,7 @@ select
 	,substr(mk.`value`,2,length(mk.`value`)-1) cli_num
 	,me.status manulifemember_status
 	,mk.activated movekey_activated
-	,from_unixtime(unix_timestamp(mk.activationdate,"yyyy-MM-dd")) activation_date
+	,to_date(substr(mk.activationdate,1,10)) activation_date
 from
 	muser_flat mu
 	inner join manulifemember_flat me on (mu.`_id` = me.userid)
@@ -292,3 +292,4 @@ from
 spark.conf.set('spark.sql.sources.partitionOverwriteMode', 'dynamic')
 
 move_monthly_ape.write.mode('overwrite').partitionBy('reporting_date').parquet(f'{out_path}MOVE_MONTHLY_APE/')
+move_monthly_ape.coalesce(1).write.mode('overwrite').option('header', 'true').csv(f'{out_path}MOVE_MONTHLY_APE/CSV/')

@@ -1,6 +1,10 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC #POLICY MOVEMENT REPORT
+# MAGIC #POLICY MOVEMENT REPORT (daily)
+
+# COMMAND ----------
+
+# MAGIC %run "/Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions"
 
 # COMMAND ----------
 
@@ -11,12 +15,15 @@
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
-from datetime import datetime, timedelta
-import calendar
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
-lst_mth = -1
-llst_mth = -2
+lday = -1
+lmth = -1
 exclude_MI = 'MI007'
+
+last_mthend = (datetime.today().replace(day=1) - relativedelta(days=1)).strftime('%Y-%m-%d')
+print("last_mthend:", last_mthend)
 
 # COMMAND ----------
 
@@ -25,10 +32,34 @@ exclude_MI = 'MI007'
 
 # COMMAND ----------
 
-tpolicys_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_CASM_CAS_SNAPSHOT_DB/TPOLICYS/'
+# Declare paths
+cdc_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/CDC/VN_PUBLISHED_CAS_DB_SYNCSORT/'
+cas_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_CASM_CAS_SNAPSHOT_DB/'
 
-tpolicys = spark.read.format("parquet").load(tpolicys_path)
-tpolicys = tpolicys.toDF(*[col.lower() for col in tpolicys.columns])
+# Declare table names
+tblSrc1 = 'TPOLICYS/'
+
+tpol_mthend = spark.read.format("parquet").load(f'{cas_path}{tblSrc1}')
+tpol_mthend = tpol_mthend.toDF(*[col.lower() for col in tpol_mthend.columns])
+
+tpol_daily = spark.read.format('delta').load(f'{cdc_path}{tblSrc1}delta/')
+tpol_daily = tpol_daily.toDF(*[col.lower() for col in tpol_daily.columns])
+
+tpol_mthend = tpol_mthend.filter(col('image_date') == last_mthend)\
+    .select(
+        'pol_num',
+        'plan_code_base',
+        'pol_stat_cd',
+        'pol_iss_dt',
+        'image_date'
+    ).distinct()
+
+tpol_daily = tpol_daily.select(
+    'pol_num',
+    'plan_code_base',
+    'pol_stat_cd',
+    'pol_iss_dt'
+).distinct()
 
 # COMMAND ----------
 
@@ -37,12 +68,17 @@ tpolicys = tpolicys.toDF(*[col.lower() for col in tpolicys.columns])
 
 # COMMAND ----------
 
-tpolicys.createOrReplaceTempView("tpolicys")
+print('tpol_daily:', tpol_daily.count(), ', tpol_mthend:', tpol_mthend.count())
+tpol_daily.createOrReplaceTempView('tpol_daily')
+tpol_mthend.createOrReplaceTempView('tpol_mthend')
+
+# COMMAND ----------
+
 pol_move_df = spark.sql(f"""
 SELECT	t.TYPE,
 		t.SUB_TYPE,
 		t.COUNT_NUM,
-		LAST_DAY(ADD_MONTHS(CURRENT_DATE,{lst_mth})) IMAGE_DATE
+		LAST_DAY(DATE_ADD(CURRENT_DATE,{lday})) IMAGE_DATE
 FROM	(
 select	'00.Beginning balance (Non MI)' type,
 		'' sub_type,
@@ -307,6 +343,7 @@ pol_move_df = pol_move_df.toDF(*[col.lower() for col in pol_move_df.columns])
 
 # COMMAND ----------
 
+spark = SparkSession.builder.appName("POLICY_MOVEMENT").getOrCreate()
 spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
 pol_move_df.write.mode("overwrite").partitionBy("image_date").parquet("abfss://lab@abcmfcadovnedl01psea.dfs.core.windows.net/vn/project/dashboard/POLICY_MOVEMENT")

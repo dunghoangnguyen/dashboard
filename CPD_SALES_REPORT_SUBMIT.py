@@ -176,7 +176,7 @@ final_df = spark.sql("""
         AND cov.vers_num = trl.vers_num
         AND cov.cvg_eff_dt = trl.cvg_eff_dt
 """)
-print("Final details:", final_df.count())
+#print("Final details:", final_df.count())
 
 # COMMAND ----------
 
@@ -228,7 +228,7 @@ GROUP BY
         final.pct_splt,
         final.wa_cd_1, final.wa_cd_2
 """)
-print("Final:", final.count())
+#print("Final:", final.count())
 
 # COMMAND ----------
 
