@@ -165,16 +165,17 @@ SELECT	pol.POL_NUM,
 		pol.WA_CODE,
 		agt.LOC_CD,
 		case when agt.loc_cd is null then 
-			(case when DIST_CHNL_CD in ('03','10','14','16','17','18','19','22','23','24','25','29','30','31','32','33','39','41','44','47','49','51','52','53') then round(cvg.RID_ANP*NVL(pln.nbv_margin_banca_other_banks,nbv.nbv_margin_banca_other_banks),2) -- 'Banca'
-				when DIST_CHNL_CD in ('48') then round(cvg.RID_ANP*NVL(pln.nbv_margin_other_channel_affinity,nbv.nbv_margin_other_channel_affinity),2)--'Affinity'
-				when DIST_CHNL_CD in ('01', '02', '08', '50', '*') then round(cvg.RID_ANP*NVL(pln.nbv_margin_agency,nbv.nbv_margin_agency),2)--'Agency'
-				when DIST_CHNL_CD in ('05','06','07','34','36') then round(cvg.RID_ANP*NVL(pln.nbv_margin_dmtm,nbv.nbv_margin_dmtm),2)--'DMTM'
-				when DIST_CHNL_CD in ('09') then round(cvg.RID_ANP*-1.34041044648343,2)--'MI'
-			else round(cvg.RID_ANP*NVL(pln.nbv_margin_other_channel,nbv.nbv_margin_other_channel),2) end) --'Unknown'
-			when DIST_CHNL_CD in ('*') then round(cvg.RID_ANP*NVL(pln.nbv_margin_agency,nbv.nbv_margin_agency),2)--'Agency'
-			when agt.loc_cd like 'TCB%' then round(cvg.RID_ANP*NVL(pln.nbv_margin_banca_tcb,nbv.nbv_margin_banca_tcb),2) --'TCB'
-			when agt.loc_cd like 'SAG%' then round(cvg.RID_ANP*NVL(pln.nbv_margin_banca_scb,nbv.nbv_margin_banca_scb),2) --'SCB'
-		else round(cvg.RID_ANP*NVL(pln.nbv_margin_other_channel,nbv.nbv_margin_other_channel),2) end as NBV, --'Unknown'
+			(case when DIST_CHNL_CD in ('03','10','14','16','17','18','19','22','23','24','25','29','30','31','32','33','39','41','44','47','49','51','52','53') then round(cvg.CVG_PREM*NVL(pln.nbv_margin_banca_other_banks,nbv.nbv_margin_banca_other_banks),2) -- 'Banca'
+				when DIST_CHNL_CD in ('48') then round(cvg.CVG_PREM*NVL(pln.nbv_margin_other_channel_affinity,nbv.nbv_margin_other_channel_affinity),2)--'Affinity'
+				when DIST_CHNL_CD in ('01', '02', '08', '50', '*') then round(cvg.CVG_PREM*NVL(pln.nbv_margin_agency,nbv.nbv_margin_agency),2)--'Agency'
+				when DIST_CHNL_CD in ('05','06','07','34','36') then round(cvg.CVG_PREM*NVL(pln.nbv_margin_dmtm,nbv.nbv_margin_dmtm),2)--'DMTM'
+				when DIST_CHNL_CD in ('09') then round(cvg.CVG_PREM*-1.34041044648343,2)--'MI'
+			else round(cvg.CVG_PREM*NVL(pln.nbv_margin_other_channel,nbv.nbv_margin_other_channel),2) end) --'Unknown'
+			when DIST_CHNL_CD in ('*') then round(cvg.CVG_PREM*NVL(pln.nbv_margin_agency,nbv.nbv_margin_agency),2)--'Agency'
+			when agt.loc_cd like 'TCB%' then round(cvg.CVG_PREM*NVL(pln.nbv_margin_banca_tcb,nbv.nbv_margin_banca_tcb),2) --'TCB'
+			when agt.loc_cd like 'SAG%' then round(cvg.CVG_PREM*NVL(pln.nbv_margin_banca_scb,nbv.nbv_margin_banca_scb),2) --'SCB'
+   			when agt.loc_cd like 'VTI%' then round(cvg.CVG_PREM*NVL(pln.nbv_margin_banca_vti,nbv.nbv_margin_banca_vti),2) --'VTB'
+		else round(cvg.CVG_PREM*NVL(pln.nbv_margin_other_channel,nbv.nbv_margin_other_channel),2) end as NBV, --'Unknown'
 		case
 			when DIST_CHNL_CD in ('01','02','08','50','*')
 			then 'Agency'
