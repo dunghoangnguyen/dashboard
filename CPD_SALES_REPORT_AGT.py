@@ -9,7 +9,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run "/Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions"
+# MAGIC %run /Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions
 
 # COMMAND ----------
 
@@ -21,10 +21,10 @@
 from pyspark.sql.functions import *
 
 # List of ABFSS paths
-cas_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
-ams_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_AMS_DB/'
-ams_bk_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_AMS_BAK_DB/'
-out_path = 'abfss://lab@abcmfcadovnedl01psea.dfs.core.windows.net/vn/project/dashboard/'
+cas_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
+ams_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_AMS_DB/'
+ams_bk_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_AMS_BAK_DB/'
+out_path = '/mnt/lab/vn/project/dashboard/'
 
 # List of tables
 tbl_src1 = 'TAMS_AGENTS/'
@@ -53,12 +53,10 @@ daily_files = [tbl_src1,tbl_src2,tbl_src3,tbl_src4,tbl_src5,tbl_src6,tbl_src7,
 
 # COMMAND ----------
 
-list_df = {}
-
 daily_df = load_parquet_files(daily_paths,daily_files)
 
 #list_df.update(snapshot_df)
-list_df.update(daily_df)
+#list_df.update(daily_df)
 
 # COMMAND ----------
 
@@ -72,7 +70,7 @@ list_df.update(daily_df)
 
 # COMMAND ----------
 
-generate_temp_view(list_df)
+generate_temp_view(daily_df)
 
 # COMMAND ----------
 

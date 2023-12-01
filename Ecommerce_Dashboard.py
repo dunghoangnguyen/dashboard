@@ -9,7 +9,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run "/Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions"
+# MAGIC %run /Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions
 
 # COMMAND ----------
 
@@ -27,14 +27,14 @@ from pyspark.sql.functions import *
 
 spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
-lab_path = 'abfss://lab@abcmfcadovnedl01psea.dfs.core.windows.net/vn/project/'
-ams_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_AMS_DB/'
-stg_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Staging/Incremental/VN_PUBLISHED_CAMPAIGN_FILEBASED_DB/'
-cas_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
-cpm_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Curated/VN/Master/VN_CURATED_CAMPAIGN_DB/'
-rpt_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Curated/VN/Master/VN_CURATED_REPORTS_DB/'
-sc_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Curated/VN/Master/VN_CURATED_ANALYTICS_DB/'
-dm_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Curated/VN/Master/VN_CURATED_DATAMART_DB/'
+lab_path = '/mnt/lab/vn/project/'
+ams_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_AMS_DB/'
+stg_path = '/mnt/prod/Staging/Incremental/VN_PUBLISHED_CAMPAIGN_FILEBASED_DB/'
+cas_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
+cpm_path = '/mnt/prod/Curated/VN/Master/VN_CURATED_CAMPAIGN_DB/'
+rpt_path = '/mnt/prod/Curated/VN/Master/VN_CURATED_REPORTS_DB/'
+sc_path = '/mnt/prod/Curated/VN/Master/VN_CURATED_ANALYTICS_DB/'
+dm_path = '/mnt/prod/Curated/VN/Master/VN_CURATED_DATAMART_DB/'
 
 dest_source = 'dashboard/ECOMMERCE_DASHBOARD/'
 tmkt_source = 'TMKT_SUBMISSION/'
@@ -60,8 +60,6 @@ parquet_files = [dest_source,tmkt_source,pol_source,lnk_source,agt_source,sc_sou
 
 # COMMAND ----------
 
-list_df = {}
-
 list_df = load_parquet_files(abfss_paths, parquet_files)
 
 # COMMAND ----------
@@ -72,10 +70,6 @@ list_df = load_parquet_files(abfss_paths, parquet_files)
 # COMMAND ----------
 
 generate_temp_view(list_df)
-
-# COMMAND ----------
-
-
 
 # COMMAND ----------
 

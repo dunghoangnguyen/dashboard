@@ -9,7 +9,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run "/Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions"
+# MAGIC %run /Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions
 
 # COMMAND ----------
 
@@ -18,8 +18,8 @@
 
 # COMMAND ----------
 
-cas_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
-lab_path = 'abfss://lab@abcmfcadovnedl01psea.dfs.core.windows.net/vn/project/'
+cas_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
+lab_path = '/mnt/lab/vn/project/'
 
 tbl_src1 = 'tmed_details/'
 tbl_src2 = 'tmed_client_details/'

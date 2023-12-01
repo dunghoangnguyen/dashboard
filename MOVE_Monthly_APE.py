@@ -53,10 +53,19 @@ snapshot_files = [in_src,tpolicys_src,tpol_lnk_src,tclient_src,tclient_oth_src,t
                  tplan_src,tfield_src,tagt_src]
 daily_files = [tcomp_src,muser_src,manulifemember_src,movekey_src]
 
-# current month (all the behaviors before the 1st of current month would be considered)
-current_mth = datetime.strftime(datetime.now(), '%Y-%m-01')
+# Get the last month-end from current system date
+
+x = 0 # Change to number of months ago (0: last month-end, 1: last last month-end, ...)
+today = datetime.now()
+first_day_of_current_month = today.replace(day=1)
+current_month = first_day_of_current_month
+for i in range(x):
+    first_day_of_previous_month = current_month - timedelta(days=1)
+    first_day_of_previous_month = first_day_of_previous_month.replace(day=1)
+    current_month = first_day_of_previous_month
+current_mth = datetime.strftime(current_month, '%Y-%m-01')
 # the snap shot would be taken on the last day of the last month
-rpt_mth = str(pd.to_datetime(current_mth) -relativedelta(days=1))[:10]
+rpt_mth = str(current_month -relativedelta(days=1))[:10]
 print(f'current_mth:', current_mth)
 print(f'rpt_mth:', rpt_mth)
 
@@ -128,7 +137,7 @@ select distinct
 		inner join tams_comp_chnl_mappings compro on (agt.comp_prvd_num = compro.comp_prvd_num)
 	where
 		pol.image_date = '{rpt_mth}'
-		and pol.pol_stat_cd not in ('1','3','5','7')		-- changed 11/10/2022 KPI definition change
+		and pol.pol_stat_cd in ('1','3','5','7')		-- changed 11/10/2022 KPI definition change
 		and cpl.rec_status = 'A'
 		and ca.zip_code is not null 
 """)
