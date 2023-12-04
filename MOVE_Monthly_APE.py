@@ -23,13 +23,13 @@ from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 # List of ABFSS paths
-lab_path = 'abfss://lab@abcmfcadovnedl01psea.dfs.core.windows.net/vn/project/scratch/ORC_ACID_to_Parquet_Conversion/apps/hive/warehouse/vn_processing_datamart_temp_db.db/'
-casm_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_CASM_CAS_SNAPSHOT_DB/'
-asm_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_CASM_AMS_SNAPSHOT_DB/'
-cas_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
-ams_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_AMS_DB/'
-move5_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_MOVE5_MONGO_DB/'
-out_path = 'abfss://lab@abcmfcadovnedl01psea.dfs.core.windows.net/vn/project/dashboard/'
+lab_path = '/mnt/lab/vn/project/scratch/ORC_ACID_to_Parquet_Conversion/apps/hive/warehouse/vn_processing_datamart_temp_db.db/'
+casm_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_CASM_CAS_SNAPSHOT_DB/'
+asm_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_CASM_AMS_SNAPSHOT_DB/'
+cas_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
+ams_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_AMS_DB/'
+move5_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_MOVE5_MONGO_DB/'
+out_path = '/mnt/prod/vn/project/dashboard/'
 
 # List of tables
 in_src = 'move_monthly_ape/'
