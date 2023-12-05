@@ -9,7 +9,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run "/Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions"
+# MAGIC %run /Repos/dung_nguyen_hoang@mfcgd.com/Utilities/Functions
 
 # COMMAND ----------
 
@@ -23,10 +23,10 @@ from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 # List of ABFSS paths
-cas_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
-ams_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_AMS_DB/'
-move5_path = 'abfss://prod@abcmfcadovnedl01psea.dfs.core.windows.net/Published/VN/Master/VN_PUBLISHED_MOVE5_MONGO_DB/'
-out_path = 'abfss://lab@abcmfcadovnedl01psea.dfs.core.windows.net/vn/project/dashboard/'
+cas_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
+ams_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_AMS_DB/'
+move5_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_MOVE5_MONGO_DB/'
+out_path = '/mnt/lab/vn/project/dashboard/'
 
 # List of tables
 tbl_src1 = 'TAMS_AGENTS/'
