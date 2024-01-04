@@ -828,6 +828,7 @@ from
 				when instr('ENC12ENC15ENC20ENF12ENF15ENF20ENM12ENM15ENM20',pol.plan_code_base) > 0 then '2018 CI Endowment'		
 				when instr('EIC12EIC15EIC20EIF12EIF15EIF20EIM12EIM15EIM20',pol.plan_code_base) > 0 then 'CIE'
 				when instr('RUV01RUV02RUV03',pol.plan_code_base) > 0 then 'RPVL (Unit-linked)'
+				when instr('RUV04RUV05RUV06RUV07',pol.plan_code_base) > 0 then 'New ILP'
 				when instr('UL038UL039UL040UL041',pol.plan_code_base) > 0 then 'Universal Life 2019'
 				when pol.plan_code_base = 'CA360' then 'Cancer360'
 				when instr('RPA03, RPA05, RPA10, RPB03, RPB05, RPB10',pol.plan_code_base)>0 then 'Term ROP'
@@ -835,6 +836,7 @@ from
 				when pol.plan_code_base = 'UL007' then '2015 Universal Life'
 				when pol.nb_user_id = 'SHOPEE' then 'Shopee'
 				when pol.plan_code_base = 'FDB01' and cvg.vers_num in ('07','08','09') then 'Shopee'
+				when instr('BIC01BIC02BIC03BIC04',pol.plan_code_base) > 0 then 'Billion Cash'
 				else
 					case
 						when need.plan_code = 'UL007' then '2015 Universal Life'

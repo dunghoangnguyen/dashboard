@@ -29,7 +29,7 @@ asm_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_CASM_AMS_SNAPSHOT_DB/'
 cas_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_CAS_DB/'
 ams_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_AMS_DB/'
 move5_path = '/mnt/prod/Published/VN/Master/VN_PUBLISHED_MOVE5_MONGO_DB/'
-out_path = '/mnt/prod/vn/project/dashboard/'
+out_path = '/mnt/lab/vn/project/dashboard/'
 
 # List of tables
 in_src = 'move_monthly_ape/'
@@ -47,9 +47,9 @@ muser_src = 'MUSER_FLAT/'
 manulifemember_src = 'MANULIFEMEMBER_FLAT/'
 movekey_src= 'MOVEKEY_FLAT/'
 
-snapshot_paths = [lab_path,casm_path,asm_path]
+snapshot_paths = [casm_path,asm_path]
 daily_paths = [ams_path,cas_path,move5_path]
-snapshot_files = [in_src,tpolicys_src,tpol_lnk_src,tclient_src,tclient_oth_src,taddr_src,tprov_src,
+snapshot_files = [tpolicys_src,tpol_lnk_src,tclient_src,tclient_oth_src,taddr_src,tprov_src,
                  tplan_src,tfield_src,tagt_src]
 daily_files = [tcomp_src,muser_src,manulifemember_src,movekey_src]
 
